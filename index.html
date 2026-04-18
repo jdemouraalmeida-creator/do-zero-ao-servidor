@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Do Zero ao Primeiro Servidor — Guia Prático Linux</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --navy:   #0F172A;
+  --blue:   #3B82F6;
+  --green:  #10B981;
+  --gray:   #64748B;
+  --light:  #F8FAFC;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: white;
+  color: var(--navy);
+  line-height: 1.6;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--navy);
+  padding: 80px 24px 72px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(59,130,246,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.hero-inner { position: relative; z-index: 1; max-width: 680px; margin: 0 auto; }
+
+.hero-badge {
+  display: inline-block;
+  background: rgba(16,185,129,0.15);
+  border: 1px solid rgba(16,185,129,0.3);
+  color: #34D399;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 6px 16px;
+  border-radius: 100px;
+  margin-bottom: 28px;
+}
+
+.hero h1 {
+  font-size: clamp(28px, 5vw, 48px);
+  font-weight: 800;
+  color: white;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+}
+
+.hero h1 span { color: var(--blue); }
+
+.hero p {
+  font-size: 18px;
+  color: #94A3B8;
+  max-width: 520px;
+  margin: 0 auto 40px;
+  line-height: 1.7;
+}
+
+.btn-primary {
+  display: inline-block;
+  background: var(--blue);
+  color: white;
+  font-size: 16px;
+  font-weight: 700;
+  padding: 16px 40px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.1s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary:hover { background: #2563EB; transform: translateY(-1px); }
+
+.hero-note {
+  margin-top: 14px;
+  font-size: 13px;
+  color: #475569;
+}
+
+/* ── PROBLEMA ── */
+.problem {
+  background: var(--light);
+  padding: 72px 24px;
+  text-align: center;
+}
+
+.problem-inner { max-width: 600px; margin: 0 auto; }
+
+.section-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 16px;
+}
+
+.problem h2 {
+  font-size: clamp(22px, 3.5vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+.problem p {
+  font-size: 16px;
+  color: #475569;
+  line-height: 1.8;
+}
+
+.problem p strong { color: var(--navy); }
+
+/* ── O QUE APRENDES ── */
+.learns {
+  padding: 72px 24px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+.learns h2 {
+  font-size: clamp(22px, 3.5vw, 32px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.learns-sub {
+  text-align: center;
+  color: var(--gray);
+  font-size: 15px;
+  margin-bottom: 48px;
+}
+
+.learns-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.learn-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 20px;
+  background: var(--light);
+  border-radius: 10px;
+  border: 1px solid #E2E8F0;
+}
+
+.learn-icon {
+  width: 36px;
+  height: 36px;
+  background: #EFF6FF;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.learn-text strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 3px;
+}
+
+.learn-text span {
+  font-size: 13px;
+  color: var(--gray);
+  line-height: 1.5;
+}
+
+/* ── CONTEÚDO ── */
+.contents {
+  background: var(--navy);
+  padding: 72px 24px;
+}
+
+.contents-inner { max-width: 640px; margin: 0 auto; }
+
+.contents h2 {
+  font-size: clamp(22px, 3.5vw, 30px);
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.contents-sub {
+  text-align: center;
+  color: #64748B;
+  font-size: 14px;
+  margin-bottom: 40px;
+}
+
+.chapter-list { list-style: none; }
+
+.chapter-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+
+.chapter-item:last-child { border-bottom: none; }
+
+.chapter-num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--blue);
+  background: rgba(59,130,246,0.1);
+  border: 1px solid rgba(59,130,246,0.2);
+  padding: 4px 8px;
+  border-radius: 4px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.chapter-info strong {
+  display: block;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 3px;
+}
+
+.chapter-info span {
+  color: #64748B;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* ── STACK ── */
+.stack {
+  padding: 72px 24px;
+  text-align: center;
+  background: var(--light);
+}
+
+.stack h2 {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.stack p {
+  color: var(--gray);
+  font-size: 15px;
+  margin-bottom: 36px;
+}
+
+.stack-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.stack-tag {
+  background: white;
+  border: 1px solid #E2E8F0;
+  color: var(--navy);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+/* ── PARA QUEM É ── */
+.forwhom {
+  padding: 72px 24px;
+  max-width: 640px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.forwhom h2 {
+  font-size: clamp(22px, 3.5vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 36px;
+}
+
+.forwhom-list {
+  list-style: none;
+  text-align: left;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.forwhom-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 15px;
+  color: #334155;
+  line-height: 1.6;
+}
+
+.check {
+  width: 22px;
+  height: 22px;
+  background: var(--green);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.cross {
+  width: 22px;
+  height: 22px;
+  background: #E2E8F0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94A3B8;
+  font-size: 12px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.forwhom-divider {
+  border: none;
+  border-top: 1px solid #E2E8F0;
+  margin: 24px 0;
+}
+
+/* ── PREÇO / CTA ── */
+.cta {
+  background: var(--navy);
+  padding: 80px 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.cta::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(59,130,246,0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(59,130,246,0.05) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+.cta-inner { position: relative; z-index: 1; max-width: 480px; margin: 0 auto; }
+
+.cta h2 {
+  font-size: clamp(22px, 3.5vw, 32px);
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.02em;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.cta-sub {
+  color: #64748B;
+  font-size: 15px;
+  margin-bottom: 40px;
+}
+
+.price-box {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 16px;
+  padding: 36px 32px;
+  margin-bottom: 24px;
+}
+
+.price-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: #475569;
+  margin-bottom: 8px;
+}
+
+.price {
+  font-size: 52px;
+  font-weight: 800;
+  color: white;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.price sup {
+  font-size: 24px;
+  font-weight: 700;
+  vertical-align: super;
+}
+
+.price-desc {
+  color: #475569;
+  font-size: 13px;
+  margin-bottom: 28px;
+}
+
+.btn-buy {
+  display: block;
+  width: 100%;
+  background: var(--blue);
+  color: white;
+  font-size: 17px;
+  font-weight: 700;
+  padding: 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  transition: background 0.2s;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-buy:hover { background: #2563EB; }
+
+.price-includes {
+  list-style: none;
+  text-align: left;
+  margin-top: 20px;
+}
+
+.price-includes li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #64748B;
+  padding: 6px 0;
+}
+
+.price-includes li::before {
+  content: '✓';
+  color: var(--green);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.guarantee {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #475569;
+}
+
+/* ── PROVA SOCIAL ── */
+.proof {
+  padding: 72px 24px;
+  background: var(--light);
+}
+
+.proof-inner { max-width: 680px; margin: 0 auto; text-align: center; }
+
+.proof h2 {
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  margin-bottom: 8px;
+}
+
+.proof-sub {
+  color: var(--gray);
+  font-size: 15px;
+  margin-bottom: 40px;
+}
+
+.testimonials {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 16px;
+  text-align: left;
+}
+
+.testimonial {
+  background: white;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 24px;
+  position: relative;
+}
+
+.testimonial::before {
+  content: '"';
+  position: absolute;
+  top: 12px;
+  left: 20px;
+  font-size: 48px;
+  color: #E2E8F0;
+  font-family: Georgia, serif;
+  line-height: 1;
+}
+
+.testimonial-text {
+  font-size: 14px;
+  color: #334155;
+  line-height: 1.7;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.testimonial-text strong { color: var(--navy); }
+
+.testimonial-footer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-top: 1px solid #F1F5F9;
+  padding-top: 14px;
+}
+
+.testimonial-avatar {
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #3B82F6, #10B981);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.testimonial-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.testimonial-role {
+  font-size: 12px;
+  color: var(--gray);
+}
+
+.proof-stat {
+  margin-top: 40px;
+  background: var(--navy);
+  border-radius: 12px;
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.proof-stat-num {
+  font-size: 36px;
+  font-weight: 900;
+  color: #3B82F6;
+  letter-spacing: -0.03em;
+}
+
+.proof-stat-text {
+  font-size: 15px;
+  color: #94A3B8;
+  text-align: left;
+  line-height: 1.5;
+}
+
+.proof-stat-text strong { color: white; display: block; }
+
+/* ── FOOTER ── */
+footer {
+  padding: 32px 24px;
+  text-align: center;
+  border-top: 1px solid #E2E8F0;
+  color: #94A3B8;
+  font-size: 13px;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 600px) {
+  .hero { padding: 60px 20px 56px; }
+  .problem, .learns, .contents, .stack, .forwhom, .cta { padding: 56px 20px; }
+  .price { font-size: 44px; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-inner">
+    <div class="hero-badge">Guia Prático · 2026</div>
+    <h1>Do Zero ao<br><span>Primeiro Servidor</span></h1>
+    <p>Aprende a hospedar a tua aplicação Node.js num servidor Linux real — com domínio próprio e HTTPS — mesmo que nunca tenhas tocado num servidor.</p>
+    <a href="#comprar" class="btn-primary">Quero o guia por 9,97€ →</a>
+    <p class="hero-note">PDF imediato · Acesso vitalício · Sem subscrição</p>
+  </div>
+</section>
+
+<!-- PROBLEMA -->
+<section class="problem">
+  <div class="problem-inner">
+    <div class="section-label">O problema</div>
+    <h2>Construíste o projecto.<br>E agora?</h2>
+    <p>Acabaste o curso, fizeste os tutoriais, o projecto funciona na tua máquina. Mas quando chega a hora de o mostrar ao mundo — <strong>tudo para</strong>.<br><br>Abres o Stack Overflow. Encontras respostas de 2019 que já não funcionam. Vês um tutorial no YouTube que usa uma ferramenta diferente. Tentas outro. Erro. Outro. Erro diferente.<br><br><strong>6 a 8 horas depois</strong>, ainda não tens nada no ar — e já não sabes se o problema é o servidor, o Nginx, o Node ou a tua sanidade.</p>
+  </div>
+</section>
+
+<!-- O QUE APRENDES -->
+<section class="learns">
+  <div class="section-label" style="text-align:center;">O que vais aprender</div>
+  <h2>Tudo o que precisas.<br>Nada do que não precisas.</h2>
+  <p class="learns-sub">Cada capítulo resolve um problema concreto. Sem teoria desnecessária.</p>
+
+  <div class="learns-grid">
+    <div class="learn-item">
+      <div class="learn-icon">🖥️</div>
+      <div class="learn-text">
+        <strong>Criar o servidor do zero</strong>
+        <span>Conta na Hetzner, Ubuntu 24.04, primeiro acesso SSH em menos de 10 minutos.</span>
+      </div>
+    </div>
+    <div class="learn-item">
+      <div class="learn-icon">⚡</div>
+      <div class="learn-text">
+        <strong>Terminal sem medo</strong>
+        <span>Os comandos que vais usar todos os dias, explicados com contexto real.</span>
+      </div>
+    </div>
+    <div class="learn-item">
+      <div class="learn-icon">🔒</div>
+      <div class="learn-text">
+        <strong>Segurança desde o início</strong>
+        <span>Firewall, utilizador não-root, SSH com chave pública — as configurações que protegem o servidor.</span>
+      </div>
+    </div>
+    <div class="learn-item">
+      <div class="learn-icon">🚀</div>
+      <div class="learn-text">
+        <strong>App em produção com PM2</strong>
+        <span>A aplicação fica a correr 24/7, reinicia sozinha em caso de crash e arranca com o servidor.</span>
+      </div>
+    </div>
+    <div class="learn-item">
+      <div class="learn-icon">🌐</div>
+      <div class="learn-text">
+        <strong>Nginx + domínio + HTTPS</strong>
+        <span>Configuras o Nginx, apontas o domínio e activias HTTPS gratuitamente com Let's Encrypt.</span>
+      </div>
+    </div>
+    <div class="learn-item">
+      <div class="learn-icon">🛠️</div>
+      <div class="learn-text">
+        <strong>Manutenção e erros comuns</strong>
+        <span>Como ler logs, fazer deploys e resolver os 6 erros mais comuns em produção.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTEÚDO -->
+<section class="contents">
+  <div class="contents-inner">
+    <div class="section-label" style="text-align:center;color:#3B82F6;">Índice</div>
+    <h2>O que está dentro do guia</h2>
+    <p class="contents-sub">5 capítulos + introdução + conclusão com roadmap DevOps</p>
+
+    <ul class="chapter-list">
+      <li class="chapter-item">
+        <span class="chapter-num">Intro</span>
+        <div class="chapter-info">
+          <strong>Introdução</strong>
+          <span>Para quem é, o que vais conseguir e o que precisas antes de começar.</span>
+        </div>
+      </li>
+      <li class="chapter-item">
+        <span class="chapter-num">Cap. 1</span>
+        <div class="chapter-info">
+          <strong>Entendendo o Linux</strong>
+          <span>Por que o Linux domina os servidores, sistema de ficheiros e o conceito de root.</span>
+        </div>
+      </li>
+      <li class="chapter-item">
+        <span class="chapter-num">Cap. 2</span>
+        <div class="chapter-info">
+          <strong>Terminal sem Medo</strong>
+          <span>25+ comandos essenciais com exemplos reais, permissões e truques que poupam tempo.</span>
+        </div>
+      </li>
+      <li class="chapter-item">
+        <span class="chapter-num">Cap. 3</span>
+        <div class="chapter-info">
+          <strong>Preparar o Servidor</strong>
+          <span>Hetzner VPS, Ubuntu 24.04, acesso SSH e configuração inicial de segurança.</span>
+        </div>
+      </li>
+      <li class="chapter-item">
+        <span class="chapter-num">Cap. 4</span>
+        <div class="chapter-info">
+          <strong>Colocar o Projecto no Ar</strong>
+          <span>Node.js 24 LTS com NVM, PM2 em produção, Nginx como reverse proxy, domínio e HTTPS.</span>
+        </div>
+      </li>
+      <li class="chapter-item">
+        <span class="chapter-num">Cap. 5</span>
+        <div class="chapter-info">
+          <strong>Manter o Servidor Vivo</strong>
+          <span>Logs, actualizações, 6 erros comuns resolvidos passo a passo e backups automáticos.</span>
+        </div>
+      </li>
+      <li class="chapter-item">
+        <span class="chapter-num">Final</span>
+        <div class="chapter-info">
+          <strong>Conclusão + Roadmap DevOps</strong>
+          <span>O caminho para continuar a crescer — do nível 2 (CI/CD, Docker) ao nível 4 (Kubernetes).</span>
+        </div>
+      </li>
+    </ul>
+  </div>
+</section>
+
+<!-- STACK -->
+<section class="stack">
+  <div class="section-label">Tecnologias</div>
+  <h2>A stack que vais aprender</h2>
+  <p>Ferramentas reais usadas em produção por empresas de todo o mundo.</p>
+  <div class="stack-tags">
+    <span class="stack-tag">Ubuntu 24.04 LTS</span>
+    <span class="stack-tag">Node.js 24 LTS</span>
+    <span class="stack-tag">NVM</span>
+    <span class="stack-tag">PM2</span>
+    <span class="stack-tag">Nginx</span>
+    <span class="stack-tag">Let's Encrypt</span>
+    <span class="stack-tag">UFW Firewall</span>
+    <span class="stack-tag">SSH</span>
+    <span class="stack-tag">Hetzner VPS</span>
+  </div>
+</section>
+
+<!-- PARA QUEM É -->
+<section class="forwhom">
+  <h2>Este guia é para ti se...</h2>
+  <ul class="forwhom-list">
+    <li><span class="check">✓</span>Sabes programar em JavaScript / Node.js mas nunca configuraste um servidor</li>
+    <li><span class="check">✓</span>Queres colocar um projecto no portfólio online de forma profissional</li>
+    <li><span class="check">✓</span>Estás a aprender DevOps e queres uma base sólida e prática</li>
+    <li><span class="check">✓</span>Já tentaste seguir tutoriais no YouTube mas ficaste preso a meio</li>
+  </ul>
+
+  <hr class="forwhom-divider">
+
+  <ul class="forwhom-list">
+    <li><span class="cross">✗</span>Não é para quem quer uma solução automática sem aprender nada</li>
+    <li><span class="cross">✗</span>Não é para quem nunca escreveu uma linha de código</li>
+  </ul>
+</section>
+
+<!-- PREÇO / CTA -->
+<section class="cta" id="comprar">
+  <div class="cta-inner">
+    <h2>6 a 8 horas de pesquisa<br>por €9,97.</h2>
+    <p class="cta-sub">Ou continuas no Stack Overflow. A escolha é tua.</p>
+
+    <div class="price-box">
+      <div class="price-label">Preço único</div>
+      <div class="price"><sup>€</sup>9<span style="font-size:32px;">,97</span></div>
+      <div class="price-desc">Pagamento único · Sem mensalidades</div>
+
+      <a href="https://joaotech.gumroad.com/l/do-zero-ao-servidor" class="btn-buy">Comprar agora →</a>
+
+      <ul class="price-includes">
+        <li>PDF completo — 5 capítulos + roadmap</li>
+        <li>Checklists de verificação em cada etapa</li>
+        <li>Guia de troubleshooting — 6 erros comuns</li>
+        <li>Actualizações futuras incluídas</li>
+        <li>Acesso vitalício</li>
+      </ul>
+    </div>
+
+    <p class="guarantee">Tens alguma dúvida? Contacta antes de comprar.</p>
+  </div>
+</section>
+
+<footer>
+  <p>© 2026 · Do Zero ao Primeiro Servidor · Todos os direitos reservados</p>
+</footer>
+
+</body>
+</html>
